@@ -12,30 +12,31 @@ function Square(props) {
 }
 
 class Board extends React.Component {
-  renderSquare(i) {
+  renderSquare(x,y) {
     return (
-        <Square value={this.props.squares[i]} 
-            onClick={() => this.props.onClick(i)} />);
+        <Square key={y} value={this.props.squares[x][y]} 
+            onClick={() => this.props.onClick(x,y)} />);
   }
 
   render() {
+    let rows = [];
+    for (var x = 0; x < this.props.squares.length; x++){
+        //setup row
+        let rowCells = [];
+        for (var y = 0; y < this.props.squares[x].length; y++){
+            //setup cell
+            rowCells.push(this.renderSquare(x,y));
+        }
+        
+        rows.push(
+            <div id={x} key={x} className="board-row">
+                {rowCells}
+            </div>
+        );
+    }
     return (
       <div>
-        <div className="board-row">
-          {this.renderSquare(0)}
-          {this.renderSquare(1)}
-          {this.renderSquare(2)}
-        </div>
-        <div className="board-row">
-          {this.renderSquare(3)}
-          {this.renderSquare(4)}
-          {this.renderSquare(5)}
-        </div>
-        <div className="board-row">
-          {this.renderSquare(6)}
-          {this.renderSquare(7)}
-          {this.renderSquare(8)}
-        </div>
+        {rows}
       </div>
     );
   }
@@ -46,26 +47,30 @@ class Game extends React.Component {
     super();
     this.state = {
         history: [{
-            squares: Array(9).fill(null)
+            squares: [Array(3).fill(null),Array(3).fill(null),Array(3).fill(null)],
+            cell: ""
         }],
         xIsNext: true,
         stepNumber: 0
     };
   }
   
-  handleClick(i) {
+  handleClick(x,y) {
     const history = this.state.history.slice(0, this.state.stepNumber + 1);
     const current = history[history.length - 1];
-    const squares = current.squares.slice();
-        
-    if (squares[i] || calculateWinner(squares)) {
+    //.slice only does a shallow copy, which is fine for 1D arrays. 
+    //for multiD arrays, need to map further
+    var squares = current.squares.slice().map( function(row){ return row.slice(); });
+    
+    if (squares[x][y] || calculateWinner(squares)) {
         return;
     }
-
-    squares[i] = this.state.xIsNext ? 'X' : 'O';
+    
+    squares[x][y] = this.state.xIsNext ? 'X' : 'O';
     this.setState({
         history: history.concat([{
-            squares: squares
+            squares: squares,
+            cell: x + ',' + y
         }]),
         xIsNext: !this.state.xIsNext,
         stepNumber: history.length
@@ -86,14 +91,14 @@ class Game extends React.Component {
 
     const moves = history.map((step, move) => {
         const desc = move ? 
-            "Move # " + move :
+            "Move " + step.cell :
             "Game Start";
         return (
             <li key={move}>
                 <a href="#" onClick={()=> this.jumpTo(move)}>{desc}</a>
             </li>
         );
-    })
+    });
 
     let status;
     if (winner) {
@@ -107,7 +112,7 @@ class Game extends React.Component {
         <div className="game-board">
             <Board
                 squares={current.squares}
-                onClick={(i) => this.handleClick(i)}
+                onClick={(i,c) => this.handleClick(i,c)}
             />
         </div>
         <div className="game-info">
@@ -121,19 +126,22 @@ class Game extends React.Component {
 
 function calculateWinner(squares) {
   const lines = [
-    [0, 1, 2],
-    [3, 4, 5],
-    [6, 7, 8],
-    [0, 3, 6],
-    [1, 4, 7],
-    [2, 5, 8],
-    [0, 4, 8],
-    [2, 4, 6],
+    [[0,0], [0,1], [0,2]],
+    [[1,0], [1,1], [1,2]],
+    [[2,0], [2,1], [2,2]],
+    [[0,0], [1,0], [2,0]],
+    [[0,1], [1,1], [2,1]],
+    [[0,2], [1,2], [2,2]],
+    [[0,0], [1,1], [2,2]],
+    [[0,2], [1,1], [2,0]]
   ];
   for (let i = 0; i < lines.length; i++) {
     const [a, b, c] = lines[i];
-    if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-      return squares[a];
+    
+    if (squares[a[0]][a[1]] && 
+        squares[a[0]][a[1]] === squares[b[0]][b[1]] && 
+        squares[a[0]][a[1]] === squares[c[0]][c[1]]) {
+      return squares[a[0]][a[1]];
     }
   }
   return null;
