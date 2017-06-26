@@ -82,6 +82,50 @@ var _React = React,
     Component = _React.Component;
 
 
+var FilterLink = function FilterLink(_ref) {
+    var filter = _ref.filter,
+        currentFilter = _ref.currentFilter,
+        children = _ref.children;
+
+    if (filter === currentFilter) {
+        return React.createElement(
+            'span',
+            null,
+            children
+        );
+    }
+    return React.createElement(
+        'a',
+        { href: '#',
+            onClick: function onClick(e) {
+                e.preventDefault();
+                store.dispatch({
+                    type: 'SET_VISIBILITY_FILTER',
+                    filter: filter
+                });
+            }
+        },
+        children
+    );
+};
+
+var getVisibleTodos = function getVisibleTodos(todos, filter) {
+    switch (filter) {
+        case 'SHOW_ALL':
+            return todos;
+        case 'SHOW_ACTIVE':
+            return todos.filter(function (t) {
+                return !t.completed;
+            });
+        case 'SHOW_COMPLETED':
+            return todos.filter(function (t) {
+                return t.completed;
+            });
+        default:
+            return todos;
+    }
+};
+
 var nextTodoID = 0;
 
 var TodoApp = function (_Component) {
@@ -98,6 +142,11 @@ var TodoApp = function (_Component) {
         value: function render() {
             var _this2 = this;
 
+            var _props = this.props,
+                todos = _props.todos,
+                visibilityFilter = _props.visibilityFilter;
+
+            var visibleTodos = getVisibleTodos(todos, visibilityFilter);
             return React.createElement(
                 'div',
                 null,
@@ -119,7 +168,7 @@ var TodoApp = function (_Component) {
                 React.createElement(
                     'ul',
                     null,
-                    this.props.todos.map(function (todo) {
+                    visibleTodos.map(function (todo) {
                         return React.createElement(
                             'li',
                             { key: todo.id,
@@ -135,6 +184,29 @@ var TodoApp = function (_Component) {
                             todo.text
                         );
                     })
+                ),
+                React.createElement(
+                    'p',
+                    null,
+                    'Show:',
+                    ' ',
+                    React.createElement(
+                        FilterLink,
+                        { filter: 'SHOW_ALL', currentFilter: visibilityFilter },
+                        'All'
+                    ),
+                    ' ',
+                    React.createElement(
+                        FilterLink,
+                        { filter: 'SHOW_ACTIVE', currentFilter: visibilityFilter },
+                        'Active'
+                    ),
+                    ' ',
+                    React.createElement(
+                        FilterLink,
+                        { filter: 'SHOW_COMPLETED', currentFilter: visibilityFilter },
+                        'Completed'
+                    )
                 )
             );
         }
@@ -144,7 +216,7 @@ var TodoApp = function (_Component) {
 }(Component);
 
 var render = function render() {
-    ReactDOM.render(React.createElement(TodoApp, { todos: store.getState().todos }), document.getElementById('root'));
+    ReactDOM.render(React.createElement(TodoApp, store.getState()), document.getElementById('root'));
 };
 
 //updates
