@@ -328,36 +328,8 @@ var TodoApp = function TodoApp() {
     );
 };
 
-var Provider = function (_Component3) {
-    _inherits(Provider, _Component3);
-
-    function Provider() {
-        _classCallCheck(this, Provider);
-
-        return _possibleConstructorReturn(this, (Provider.__proto__ || Object.getPrototypeOf(Provider)).apply(this, arguments));
-    }
-
-    _createClass(Provider, [{
-        key: 'getChildContext',
-        value: function getChildContext() {
-            return {
-                store: this.props.store
-            };
-        }
-    }, {
-        key: 'render',
-        value: function render() {
-            return this.props.children;
-        }
-    }]);
-
-    return Provider;
-}(Component);
-
-Provider.childContextTypes = {
-    store: React.PropTypes.object
-};
-
+var _ReactRedux = ReactRedux,
+    Provider = _ReactRedux.Provider;
 var _Redux2 = Redux,
     createStore = _Redux2.createStore;
 
