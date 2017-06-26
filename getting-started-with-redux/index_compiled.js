@@ -265,57 +265,29 @@ var getVisibleTodos = function getVisibleTodos(todos, filter) {
     }
 };
 
-var VisibleTodoList = function (_Component2) {
-    _inherits(VisibleTodoList, _Component2);
-
-    function VisibleTodoList() {
-        _classCallCheck(this, VisibleTodoList);
-
-        return _possibleConstructorReturn(this, (VisibleTodoList.__proto__ || Object.getPrototypeOf(VisibleTodoList)).apply(this, arguments));
-    }
-
-    _createClass(VisibleTodoList, [{
-        key: 'componentDidMount',
-        value: function componentDidMount() {
-            var _this4 = this;
-
-            var store = this.context.store;
-
-            this.unsubscribe = store.subscribe(function () {
-                return _this4.forceUpdate();
-            });
-        }
-    }, {
-        key: 'componentWillUnmount',
-        value: function componentWillUnmount() {
-            this.unsubscribe();
-        }
-    }, {
-        key: 'render',
-        value: function render() {
-            var props = this.props;
-            var store = this.context.store;
-
-            var state = store.getState();
-
-            return React.createElement(TodoList, {
-                todos: getVisibleTodos(state.todos, state.visibilityFilter),
-                onTodoClick: function onTodoClick(id) {
-                    return store.dispatch({
-                        type: 'TOGGLE_TODO',
-                        id: id
-                    });
-                }
-            });
-        }
-    }]);
-
-    return VisibleTodoList;
-}(Component);
-
-VisibleTodoList.contextTypes = {
-    store: React.PropTypes.object
+//props for the presentational component. will be updated any time state is updated
+var mapStateToProps = function mapStateToProps(state) {
+    return {
+        todos: getVisibleTodos(state.todos, state.visibilityFilter)
+    };
 };
+
+var mapDispatchToProps = function mapDispatchToProps(dispatch) {
+    return {
+        onTodoClick: function onTodoClick(id) {
+            dispatch({
+                type: 'TOGGLE_TODO',
+                id: id
+            });
+        }
+    };
+};
+
+var _ReactRedux = ReactRedux,
+    connect = _ReactRedux.connect;
+
+var VisibleTodoList = connect(mapStateToProps, mapDispatchToProps)(TodoList); //presentational component that you're connecting to the redux store
+
 
 var nextTodoID = 0;
 var TodoApp = function TodoApp() {
@@ -328,8 +300,8 @@ var TodoApp = function TodoApp() {
     );
 };
 
-var _ReactRedux = ReactRedux,
-    Provider = _ReactRedux.Provider;
+var _ReactRedux2 = ReactRedux,
+    Provider = _ReactRedux2.Provider;
 var _Redux2 = Redux,
     createStore = _Redux2.createStore;
 
