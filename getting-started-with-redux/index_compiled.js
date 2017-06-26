@@ -73,11 +73,6 @@ var todoApp = combineReducers({
     visibilityFilter: visibilityFilter
 });
 
-var _Redux2 = Redux,
-    createStore = _Redux2.createStore;
-
-var store = createStore(todoApp);
-
 var _React = React,
     Component = _React.Component;
 
@@ -120,6 +115,8 @@ var FilterLink = function (_Component) {
         value: function componentDidMount() {
             var _this2 = this;
 
+            var store = this.props.store;
+
             this.unsubscribe = store.subscribe(function () {
                 return _this2.forceUpdate();
             });
@@ -133,6 +130,8 @@ var FilterLink = function (_Component) {
         key: 'render',
         value: function render() {
             var props = this.props;
+            var store = props.store;
+
             var state = store.getState();
 
             return React.createElement(
@@ -155,7 +154,8 @@ var FilterLink = function (_Component) {
     return FilterLink;
 }(Component);
 
-var Footer = function Footer() {
+var Footer = function Footer(_ref2) {
+    var store = _ref2.store;
     return React.createElement(
         'p',
         null,
@@ -163,31 +163,34 @@ var Footer = function Footer() {
         ' ',
         React.createElement(
             FilterLink,
-            { filter: 'SHOW_ALL'
+            { filter: 'SHOW_ALL',
+                store: store
             },
             'All'
         ),
         ' ',
         React.createElement(
             FilterLink,
-            { filter: 'SHOW_ACTIVE'
+            { filter: 'SHOW_ACTIVE',
+                store: store
             },
             'Active'
         ),
         ' ',
         React.createElement(
             FilterLink,
-            { filter: 'SHOW_COMPLETED'
+            { filter: 'SHOW_COMPLETED',
+                store: store
             },
             'Completed'
         )
     );
 };
 
-var Todo = function Todo(_ref2) {
-    var onClick = _ref2.onClick,
-        completed = _ref2.completed,
-        text = _ref2.text;
+var Todo = function Todo(_ref3) {
+    var onClick = _ref3.onClick,
+        completed = _ref3.completed,
+        text = _ref3.text;
     return React.createElement(
         'li',
         {
@@ -199,9 +202,9 @@ var Todo = function Todo(_ref2) {
     );
 };
 
-var TodoList = function TodoList(_ref3) {
-    var todos = _ref3.todos,
-        onTodoClick = _ref3.onTodoClick;
+var TodoList = function TodoList(_ref4) {
+    var todos = _ref4.todos,
+        onTodoClick = _ref4.onTodoClick;
     return React.createElement(
         'ul',
         null,
@@ -217,7 +220,9 @@ var TodoList = function TodoList(_ref3) {
     );
 };
 
-var AddTodo = function AddTodo() {
+var AddTodo = function AddTodo(_ref5) {
+    var store = _ref5.store;
+
     var input = void 0;
     return React.createElement(
         'div',
@@ -271,6 +276,8 @@ var VisibleTodoList = function (_Component2) {
         value: function componentDidMount() {
             var _this4 = this;
 
+            var store = this.props.store;
+
             this.unsubscribe = store.subscribe(function () {
                 return _this4.forceUpdate();
             });
@@ -284,6 +291,8 @@ var VisibleTodoList = function (_Component2) {
         key: 'render',
         value: function render() {
             var props = this.props;
+            var store = props.store;
+
             var state = store.getState();
 
             return React.createElement(TodoList, {
@@ -302,14 +311,19 @@ var VisibleTodoList = function (_Component2) {
 }(Component);
 
 var nextTodoID = 0;
-var TodoApp = function TodoApp() {
+var TodoApp = function TodoApp(_ref6) {
+    var store = _ref6.store;
     return React.createElement(
         'div',
         null,
-        React.createElement(AddTodo, null),
-        React.createElement(VisibleTodoList, null),
-        React.createElement(Footer, null)
+        React.createElement(AddTodo, { store: store }),
+        React.createElement(VisibleTodoList, { store: store }),
+        React.createElement(Footer, { store: store })
     );
 };
 
-ReactDOM.render(React.createElement(TodoApp, null), document.getElementById('root'));
+var _Redux2 = Redux,
+    createStore = _Redux2.createStore;
+
+
+ReactDOM.render(React.createElement(TodoApp, { store: createStore(todoApp) }), document.getElementById('root'));
