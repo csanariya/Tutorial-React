@@ -14,7 +14,12 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 
 //compile on https://babeljs.io/repl/#
 
+
+var _ReactRedux = ReactRedux,
+    connect = _ReactRedux.connect;
+
 //reducer for todo
+
 var todo = function todo(state, action) {
     switch (action.type) {
         case 'ADD_TODO':
@@ -220,8 +225,8 @@ var TodoList = function TodoList(_ref3) {
     );
 };
 
-var AddTodo = function AddTodo(props, _ref4) {
-    var store = _ref4.store;
+var AddTodo = function AddTodo(_ref4) {
+    var dispatch = _ref4.dispatch;
 
     var input = void 0;
     return React.createElement(
@@ -233,7 +238,7 @@ var AddTodo = function AddTodo(props, _ref4) {
         React.createElement(
             'button',
             { onClick: function onClick() {
-                    store.dispatch({
+                    dispatch({
                         type: 'ADD_TODO',
                         text: input.value,
                         id: nextTodoID++
@@ -244,9 +249,7 @@ var AddTodo = function AddTodo(props, _ref4) {
         )
     );
 };
-AddTodo.contextTypes = {
-    store: React.PropTypes.object
-};
+AddTodo = connect()(AddTodo); //default behavior of connect(mapState, mapDispatch) to not sub to store, and dispatch fx is injected as a prop
 
 var getVisibleTodos = function getVisibleTodos(todos, filter) {
     switch (filter) {
@@ -265,14 +268,13 @@ var getVisibleTodos = function getVisibleTodos(todos, filter) {
     }
 };
 
-//props for the presentational component. will be updated any time state is updated
-var mapStateToProps = function mapStateToProps(state) {
+//props for the presentational component (TodoList). will be updated any time state is updated
+var mapStateToTodoListProps = function mapStateToTodoListProps(state) {
     return {
         todos: getVisibleTodos(state.todos, state.visibilityFilter)
     };
 };
-
-var mapDispatchToProps = function mapDispatchToProps(dispatch) {
+var mapDispatchToTodoListProps = function mapDispatchToTodoListProps(dispatch) {
     return {
         onTodoClick: function onTodoClick(id) {
             dispatch({
@@ -283,10 +285,8 @@ var mapDispatchToProps = function mapDispatchToProps(dispatch) {
     };
 };
 
-var _ReactRedux = ReactRedux,
-    connect = _ReactRedux.connect;
-
-var VisibleTodoList = connect(mapStateToProps, mapDispatchToProps)(TodoList); //presentational component that you're connecting to the redux store
+//containter component
+var VisibleTodoList = connect(mapStateToTodoListProps, mapDispatchToTodoListProps)(TodoList); //presentational component that you're connecting to the redux store
 
 
 var nextTodoID = 0;

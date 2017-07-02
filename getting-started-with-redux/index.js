@@ -1,5 +1,8 @@
 //compile on https://babeljs.io/repl/#
 
+
+const { connect } = ReactRedux;
+
 //reducer for todo
 const todo = (state, action) => {
     switch (action.type) {
@@ -152,13 +155,13 @@ const TodoList = ({
     </ul>
 )
 
-const AddTodo = (props, { store }) => {
+let AddTodo = ({ dispatch }) => {
     let input;
     return (
         <div>
             <input ref={node => {input=node;}} />
             <button onClick={() => {
-                store.dispatch({
+                dispatch({
                     type: 'ADD_TODO',
                     text: input.value,
                     id: nextTodoID++
@@ -170,10 +173,7 @@ const AddTodo = (props, { store }) => {
         </div>
     );
 };
-AddTodo.contextTypes = {
-    store: React.PropTypes.object
-};
-
+AddTodo = connect()(AddTodo); //default behavior of connect(mapState, mapDispatch) to not sub to store, and dispatch fx is injected as a prop
 
 const getVisibleTodos = (
     todos,
@@ -191,14 +191,20 @@ const getVisibleTodos = (
     }
 }
 
-//props for the presentational component. will be updated any time state is updated
-const mapStateToProps = (state) => {
+//props for the presentational component (TodoList). will be updated any time state is updated
+const mapStateToTodoListProps = (
+    state
+) => {
     return {
-        todos: getVisibleTodos(state.todos, state.visibilityFilter)
+        todos: getVisibleTodos(
+            state.todos, 
+            state.visibilityFilter
+        )
     };
 };
-
-const mapDispatchToProps = (dispatch) => {
+const mapDispatchToTodoListProps = (
+    dispatch
+) => {
     return {
         onTodoClick: (id) => {
             dispatch({
@@ -209,10 +215,10 @@ const mapDispatchToProps = (dispatch) => {
     };
 };
 
-const { connect } = ReactRedux;
+//containter component
 const VisibleTodoList = connect(
-        mapStateToProps,
-        mapDispatchToProps
+        mapStateToTodoListProps,
+        mapDispatchToTodoListProps
     )(TodoList); //presentational component that you're connecting to the redux store
 
 
