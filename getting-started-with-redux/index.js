@@ -59,6 +59,28 @@ const todoApp = combineReducers({
     visibilityFilter
 });
 
+let nextTodoID = 0;
+const addTodo = (text) => {
+    return {
+        type: 'ADD_TODO',
+        text,
+        id: nextTodoID++
+    };
+};
+
+const setVisibilityFilter = (filter) => {
+    return {
+        type: 'SET_VISIBILITY_FILTER',
+        filter
+    };
+};
+
+const toggleTodo = (id) => {
+    return {
+        type: 'TOGGLE_TODO',
+        id
+    };
+};
 
 const { Component } = React;
 
@@ -95,10 +117,9 @@ const mapDispatchToLinkProps = (
 ) => {
     return {
         onClick: () => { 
-            dispatch({
-                type: 'SET_VISIBILITY_FILTER',
-                filter: ownProps.filter
-            });
+            dispatch(
+                setVisibilityFilter(ownProps.filter)
+            );
         }
     };
 };
@@ -151,17 +172,14 @@ const TodoList = ({
     </ul>
 )
 
+
 let AddTodo = ({ dispatch }) => {
     let input;
     return (
         <div>
             <input ref={node => {input=node;}} />
             <button onClick={() => {
-                dispatch({
-                    type: 'ADD_TODO',
-                    text: input.value,
-                    id: nextTodoID++
-                });
+                dispatch(addTodo(input.value));
                 input.value='';
             }}>
             Add Todo
@@ -203,10 +221,7 @@ const mapDispatchToTodoListProps = (
 ) => {
     return {
         onTodoClick: (id) => {
-            dispatch({
-                type: 'TOGGLE_TODO',
-                id
-            })
+            dispatch(toggleTodo(id))
         }
     };
 };
@@ -218,7 +233,6 @@ const VisibleTodoList = connect(
     )(TodoList); //presentational component that you're connecting to the redux store
 
 
-let nextTodoID = 0;
 const TodoApp = () => (
     <div>
         <AddTodo />

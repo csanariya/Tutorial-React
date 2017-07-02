@@ -70,6 +70,29 @@ var todoApp = combineReducers({
     visibilityFilter: visibilityFilter
 });
 
+var nextTodoID = 0;
+var addTodo = function addTodo(text) {
+    return {
+        type: 'ADD_TODO',
+        text: text,
+        id: nextTodoID++
+    };
+};
+
+var setVisibilityFilter = function setVisibilityFilter(filter) {
+    return {
+        type: 'SET_VISIBILITY_FILTER',
+        filter: filter
+    };
+};
+
+var toggleTodo = function toggleTodo(id) {
+    return {
+        type: 'TOGGLE_TODO',
+        id: id
+    };
+};
+
 var _React = React,
     Component = _React.Component;
 
@@ -107,10 +130,7 @@ var mapStateToLinkProps = function mapStateToLinkProps(state, ownProps //contain
 var mapDispatchToLinkProps = function mapDispatchToLinkProps(dispatch, ownProps) {
     return {
         onClick: function onClick() {
-            dispatch({
-                type: 'SET_VISIBILITY_FILTER',
-                filter: ownProps.filter
-            });
+            dispatch(setVisibilityFilter(ownProps.filter));
         }
     };
 };
@@ -192,11 +212,7 @@ var AddTodo = function AddTodo(_ref4) {
         React.createElement(
             'button',
             { onClick: function onClick() {
-                    dispatch({
-                        type: 'ADD_TODO',
-                        text: input.value,
-                        id: nextTodoID++
-                    });
+                    dispatch(addTodo(input.value));
                     input.value = '';
                 } },
             'Add Todo'
@@ -231,10 +247,7 @@ var mapStateToTodoListProps = function mapStateToTodoListProps(state) {
 var mapDispatchToTodoListProps = function mapDispatchToTodoListProps(dispatch) {
     return {
         onTodoClick: function onTodoClick(id) {
-            dispatch({
-                type: 'TOGGLE_TODO',
-                id: id
-            });
+            dispatch(toggleTodo(id));
         }
     };
 };
@@ -243,7 +256,6 @@ var mapDispatchToTodoListProps = function mapDispatchToTodoListProps(dispatch) {
 var VisibleTodoList = connect(mapStateToTodoListProps, mapDispatchToTodoListProps)(TodoList); //presentational component that you're connecting to the redux store
 
 
-var nextTodoID = 0;
 var TodoApp = function TodoApp() {
     return React.createElement(
         'div',
