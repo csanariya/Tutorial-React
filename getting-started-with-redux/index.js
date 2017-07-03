@@ -68,6 +68,7 @@ const addTodo = (text) => {
     };
 };
 
+//action creators
 const setVisibilityFilter = (filter) => {
     return {
         type: 'SET_VISIBILITY_FILTER',
@@ -84,6 +85,7 @@ const toggleTodo = (id) => {
 
 const { Component } = React;
 
+//presentational component
 const Link = ({
     active,
     children,
@@ -124,6 +126,7 @@ const mapDispatchToLinkProps = (
     };
 };
 
+//container component
 const FilterLink = connect(
     mapStateToLinkProps,
     mapDispatchToLinkProps

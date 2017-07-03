@@ -79,6 +79,7 @@ var addTodo = function addTodo(text) {
     };
 };
 
+//action creators
 var setVisibilityFilter = function setVisibilityFilter(filter) {
     return {
         type: 'SET_VISIBILITY_FILTER',
@@ -96,6 +97,7 @@ var toggleTodo = function toggleTodo(id) {
 var _React = React,
     Component = _React.Component;
 
+//presentational component
 
 var Link = function Link(_ref) {
     var active = _ref.active,
@@ -135,6 +137,7 @@ var mapDispatchToLinkProps = function mapDispatchToLinkProps(dispatch, ownProps)
     };
 };
 
+//container component
 var FilterLink = connect(mapStateToLinkProps, mapDispatchToLinkProps)(Link);
 
 var Footer = function Footer() {
